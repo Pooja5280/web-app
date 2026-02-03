@@ -28,7 +28,7 @@ const App = () => {
         setLoading(true);
         setApiError(null); 
         try {
-         
+          // Fetching the full inventory of 100 products
           const res = await axios.get('https://dummyjson.com/products?limit=100');
           setProducts(res.data.products);
         } catch (err) {
@@ -44,10 +44,12 @@ const App = () => {
     }
   }, [view, products.length]);
 
+  // Handle filtering and sorting logic
   const filteredProducts = products
     .filter((p) => p.title.toLowerCase().includes(searchQuery.toLowerCase()))
     .sort((a, b) => (sortOrder === 'asc' ? a.price - b.price : b.price - a.price));
 
+  // Calculate pagination values
   const totalPages = Math.ceil(filteredProducts.length / itemsPerPage);
   const currentItems = filteredProducts.slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage);
 
@@ -63,13 +65,11 @@ const App = () => {
         ) : apiError ? (
           <Error statusCode={apiError.code} message={apiError.message} />
         ) : !loading && filteredProducts.length === 0 ? (
-          /* Updated Logic: If loading is done and there are 0 products 
-             (either from the API or from search), show the Empty component.
-          */
           <Empty query={searchQuery} />
         ) : (
           <ProductList 
             loading={loading}
+            products={products} // CRITICAL: Passed full array for CSV/PDF export
             currentItems={currentItems}
             searchQuery={searchQuery}
             setSearchQuery={setSearchQuery}
