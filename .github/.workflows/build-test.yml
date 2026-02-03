@@ -1,26 +1,21 @@
-name: Node.js CI Build Test
+name: Docker Build Test
 
 on:
   push:
     branches: [ "main" ]
 
 jobs:
-  build:
+  docker-build:
     runs-on: ubuntu-latest
 
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
 
-    - name: Set up Node.js
-      uses: actions/setup-node@v4
-      with:
-        node-version: 20
-        cache: 'npm'
+    - name: Build Docker Image
+      # This command reads your Dockerfile and tries to build the container
+      run: docker build -t luxora-app:latest .
 
-    - name: Install dependencies
-      run: npm install
-
-    - name: Build the project
-    # This checks if your jspdf and other libraries are working correctly
-      run: npm run build
+    - name: Verify Docker Image
+      # This lists the images to prove it was created successfully
+      run: docker images
